@@ -1,5 +1,5 @@
 const rp = require('request-promise');
-const fs = require('fs');
+const fs = require('fs')
 const $ = require('cheerio');
 const resultParse = require('./resultParse');
 const webpageParse = require('./webpageParse');
@@ -9,7 +9,7 @@ rp(url)
   .then(function(html) {
     //success!
 
-    const isbnArray = [9780380811960, 9780553381153];
+    const isbnArray = [9780553381153];
     // const isbnArray = [
     //   9781889140438,
     //   9780061246562,
@@ -228,14 +228,20 @@ rp(url)
     //   9780375700002,
     //   9781889140162,
     // ];
-    return Promise.all(isbnArray.map(isbn => resultParse({ url, isbn })));
+    return Promise.all(
+      isbnArray.map(isbns => resultParse(url + isbns, isbns))
+    );
+    // return rp('https://www.goodreads.com/book/title.xml?key=yXZIGleYDqexQC7C40PFg&title=9781782491156')
+    // .then(function(html) {
+    //   console.log(html)
+    // })
   })
   .then(results => {
     //results.map(result => webpageParse(result.href))
     fs.writeFile('data.json', JSON.stringify(results), err => {
-      if (err) return console.log(err);
-      console.log('saved');
-    });
+      if (err) return console.log(err)
+      console.log('saved')
+    })
     console.log(results);
   })
   .catch(err => {
