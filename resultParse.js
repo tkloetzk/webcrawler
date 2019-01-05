@@ -1,23 +1,31 @@
-
 const rp = require('request-promise');
 const $ = require('cheerio');
 
-const resultParse = function(url, isbn) {
+const resultParse = isbn => {
+  const url =
+    'http://api.scraperapi.com/?key=90d416faaa0849a3aac0e060f6faf854&url=' +
+    encodeURIComponent(
+      `https://www.amazon.com/s/ref=sr_nr_i_0?fst=as%3Aoff&rh=k%3A${isbn}%2Ci%3Astripbooks&keywords=${isbn}&ie=UTF8`
+    );
   return rp(url)
-    .then(function(html) {
+    .then(html => {
       return {
-        name: $('.a-size-medium.s-inline.s-access-title.a-text-normal', html).text(),
-        rating: $('i.a-icon.a-icon-star > span', html).text().split(' o')[0],
+        name: $(
+          '.a-size-medium.s-inline.s-access-title.a-text-normal',
+          html
+        ).text(),
+        rating: $('i.a-icon.a-icon-star > span', html)
+          .text()
+          .split(' o')[0],
         reviews: $('div.a-column.a-span5.a-span-last > div > a', html).text(),
         price: $('.a-offscreen', html).text(),
         image: $('a.a-link-normal.a-text-normal > img', html).attr('src'),
         href: $('a.a-link-normal.a-text-normal', html).attr('href'),
-        isbn
-        //section: $('.s-item-container', html)
+        isbn,
       };
     })
-    .catch(function(err) {
-      //handle error
+    .catch(err => {
+      console.log(err);
     });
 };
 
