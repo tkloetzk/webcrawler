@@ -1,11 +1,11 @@
 const rp = require('request-promise');
 const $ = require('cheerio');
 
-const resultParse = isbn => {
+const resultParse = (isbn, category) => {
   const url =
     'http://api.scraperapi.com/?key=90d416faaa0849a3aac0e060f6faf854&url=' +
     encodeURIComponent(
-      `https://www.amazon.com/s/ref=sr_nr_i_0?fst=as%3Aoff&rh=k%3A${isbn}%2Ci%3Astripbooks&keywords=${isbn}&ie=UTF8`
+      `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Dstripbooks&field-keywords=${isbn}&rh=n%3A283155%2Ck%3A${isbn}`
     );
   return rp(url)
     .then(html => {
@@ -22,6 +22,7 @@ const resultParse = isbn => {
         image: $('a.a-link-normal.a-text-normal > img', html).attr('src'),
         href: $('a.a-link-normal.a-text-normal', html).attr('href'),
         isbn,
+        category,
       };
     })
     .catch(err => {
